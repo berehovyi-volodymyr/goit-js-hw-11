@@ -1,11 +1,44 @@
 .search-form {
-    display: flex;
-    justify-content: center;
-    padding-top: 20px;
-    padding-bottom: 20px;
-    background-color: #4391e6;
+  display: flex;
+  justify-content: center;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  background-color: #4391e6;
 }
 
-.input{
-    margin-right: 10px;
+.input {
+  margin-right: 10px;
+}
+
+.buttonMore {
+  margin: 20px auto 50px auto;
+  display: block;
+}
+
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 25px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.photo-card {
+  width: 320px;
+}
+
+.info {
+  display: flex;
+  justify-content: space-between;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.qty {
+  margin-top: 5px;
 }
