@@ -1,11 +1,11 @@
 import PixabayApiService from './api';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 const refs = {
   byttonSearch: document.querySelector('button'),
   form: document.querySelector('#search-form'),
-  input: document.querySelector('.input'),
   loadMoreBtn: document.querySelector('.buttonMore'),
   gallery: document.querySelector('.gallery'),
 };
@@ -19,12 +19,23 @@ function onClick(e) {
   e.preventDefault();
   pixabayApiService.query = e.currentTarget.elements.searchQuery.value;
   pixabayApiService.restPage();
-  pixabayApiService.fetchPictures().then(render);
+  pixabayApiService.fetchPictures().then(data => {
+    if (data.hits.length === 0) {
+      refs.loadMoreBtn.setAttribute('disabled', 'disabled');
+      Notify.failure(
+        'Sorry, there are no images matching your search query. Please try again.'
+      );
+    } else {
+      Notify.info(`Hooray! We found ${data.totalHits} images.`);
+      render(data.hits);
+      refs.loadMoreBtn.removeAttribute('disabled');
+    }
+  });
   clearRender();
 }
 
 function onLoadMore() {
-  pixabayApiService.fetchPictures().then(render);
+  pixabayApiService.fetchPictures().then(data => render(data.hits));
 }
 
 function render(hits) {

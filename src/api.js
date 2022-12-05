@@ -1,3 +1,4 @@
+const axios = require('axios').default;
 const KEY = '31788075-b7615e81e6dda1dedffa3dd10';
 export default class PixabayApi {
   constructor() {
@@ -6,6 +7,14 @@ export default class PixabayApi {
   }
 
   fetchPictures() {
+    // try {
+    //   const { data } = await axios.get(
+    //     `https://pixabay.com/api/?key=${KEY}&q=${this.searchQuery}&image_type=photo&orientation=horizontal&safesearch=true&page=${this.page}&per_page=40`
+    //   );
+    // } catch (error) {
+    //   console.error(error);
+    // }
+
     return fetch(
       `https://pixabay.com/api/?key=${KEY}&q=${this.searchQuery}&image_type=photo&orientation=horizontal&safesearch=true&page=${this.page}&per_page=40`
     )
@@ -13,7 +22,7 @@ export default class PixabayApi {
       .then(data => {
         this.page += 1;
 
-        return data.hits;
+        return data;
       });
   }
 
