@@ -14,7 +14,11 @@ export default class PixabayApi {
       `https://pixabay.com/api/?key=${KEY}&q=${this.searchQuery}&image_type=photo&orientation=horizontal&safesearch=true&page=${this.page}&per_page=40`
     );
 
-    if (Math.ceil(data.totalHits / 40) < this.page) {
+    if (data.totalHits === 0) {
+      Notify.failure(
+        'Sorry, there are no images matching your search query. Please try again.'
+      );
+    } else if (Math.ceil(data.totalHits / 40) < this.page) {
       Notify.info("We're sorry, but you've reached the end of search results.");
     }
 

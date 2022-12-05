@@ -19,18 +19,18 @@ function onClick(e) {
   e.preventDefault();
   pixabayApiService.query = e.currentTarget.elements.searchQuery.value;
   pixabayApiService.restPage();
-  pixabayApiService.fetchPictures().then(data => {
-    if (data.hits.length === 0) {
-      refs.loadMoreBtn.setAttribute('disabled', 'disabled');
-      Notify.failure(
-        'Sorry, there are no images matching your search query. Please try again.'
-      );
-    } else {
-      Notify.info(`Hooray! We found ${data.totalHits} images.`);
+  pixabayApiService
+    .fetchPictures()
+    .then(data => {
       render(data.hits);
       refs.loadMoreBtn.removeAttribute('disabled');
-    }
-  });
+      return data;
+    })
+    .then(data => {
+      if (data.totalHits > 1) {
+        Notify.success(`Hooray! We found ${data.totalHits} images.`);
+      }
+    });
   clearRender();
 }
 
