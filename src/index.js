@@ -2,36 +2,39 @@ import PixabayApiService from './api';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
-
-const refs = {
-  byttonSearch: document.querySelector('button'),
-  form: document.querySelector('#search-form'),
-  loadMoreBtn: document.querySelector('.buttonMore'),
-  gallery: document.querySelector('.gallery'),
-};
+import { refs } from './reference';
 
 refs.form.addEventListener('submit', onClick);
 refs.loadMoreBtn.addEventListener('click', onLoadMore);
 
 const pixabayApiService = new PixabayApiService();
 
+const lightbox = new SimpleLightbox('.gallery >.photo-card a', {
+  captions: true,
+  captionDelay: 250,
+});
+
 function onClick(e) {
   e.preventDefault();
-  pixabayApiService.query = e.currentTarget.elements.searchQuery.value;
+  pixabayApiService.query = e.currentTarget.elements.searchQuery.value.trim();
   pixabayApiService.restPage();
   pixabayApiService
     .fetchPictures()
     .then(data => {
+      clearRender();
       render(data.hits);
-      refs.loadMoreBtn.removeAttribute('disabled');
+      refs.loadMoreBtn.classList.remove('visually-hidden');
       return data;
     })
     .then(data => {
       if (data.totalHits > 1) {
         Notify.success(`Hooray! We found ${data.totalHits} images.`);
       }
+    })
+    .then(() => {
+      lightbox;
+      lightbox.refresh();
     });
-  clearRender();
 }
 
 function onLoadMore() {
@@ -41,8 +44,8 @@ function onLoadMore() {
 function render(hits) {
   const markup = hits
     .map(
-      hit => `<div class="photo-card">
-  <img src="${hit.webformatURL}" alt="${hit.tags}" loading="lazy" width=320 height= 200 />
+      hit => `<div class="photo-card"><a class="gallery__item" href="${hit.largeImageURL}">
+  <img src="${hit.webformatURL}" alt="${hit.tags}" loading="lazy" width=320 height= 200 /></a>
   <div class="info">
     <p class="info-item">
       <b>Likes</b>
@@ -61,7 +64,7 @@ function render(hits) {
       <span class="qty">${hit.downloads}</span>
     </p>
   </div>
-</div>`
+   </div>`
     )
     .join('');
 
@@ -71,8 +74,3 @@ function render(hits) {
 function clearRender() {
   refs.gallery.innerHTML = '';
 }
-
-// const lightbox = new SimpleLightbox('.gallery a', {
-//   captions: true,
-//   captionDelay: 250,
-// });
