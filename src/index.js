@@ -3,6 +3,7 @@ import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import { refs } from './reference';
+import { scroll } from './scroll';
 
 refs.form.addEventListener('submit', onClick);
 refs.loadMoreBtn.addEventListener('click', onLoadMore);
@@ -34,11 +35,17 @@ function onClick(e) {
     .then(() => {
       lightbox;
       lightbox.refresh();
+    })
+    .then(() => {
+      scroll();
     });
 }
 
 function onLoadMore() {
-  pixabayApiService.fetchPictures().then(data => render(data.hits));
+  pixabayApiService
+    .fetchPictures()
+    .then(data => render(data.hits))
+    .then(() => scroll());
 }
 
 function render(hits) {
