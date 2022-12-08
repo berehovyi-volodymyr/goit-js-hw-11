@@ -17,8 +17,18 @@ const lightbox = new SimpleLightbox('.gallery >.photo-card a', {
 
 function onClick(e) {
   e.preventDefault();
-  pixabayApiService.query = e.currentTarget.elements.searchQuery.value.trim();
+  let value = e.currentTarget.elements.searchQuery.value;
+  if (value.trim() !== '') {
+    pixabayApiService.query = value;
+  } else {
+    Notify.failure(
+      'Sorry, there are no images matching your search query. Please try again.'
+    );
+    return;
+  }
+
   pixabayApiService.restPage();
+
   pixabayApiService
     .fetchPictures()
     .then(data => {
@@ -35,9 +45,6 @@ function onClick(e) {
     .then(() => {
       lightbox;
       lightbox.refresh();
-    })
-    .then(() => {
-      scroll();
     });
 }
 
@@ -80,4 +87,9 @@ function render(hits) {
 
 function clearRender() {
   refs.gallery.innerHTML = '';
+}
+
+function error() {
+  Notify.info("We're sorry, but you've reached the end of search results.");
+  refs.loadMoreBtn.classList.add('visually-hidden');
 }

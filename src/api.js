@@ -11,22 +11,29 @@ export default class PixabayApi {
   }
 
   async fetchPictures() {
-    const { data } = await axios.get(
-      `https://pixabay.com/api/?key=${KEY}&q=${this.searchQuery}&image_type=photo&orientation=horizontal&safesearch=true&page=${this.page}&per_page=40`
-    );
-
-    if (data.totalHits === 0) {
-      Notify.failure(
-        'Sorry, there are no images matching your search query. Please try again.'
+    try {
+      const { data } = await axios.get(
+        `https://pixabay.com/api/?key=${KEY}&q=${this.searchQuery}&image_type=photo&orientation=horizontal&safesearch=true&page=${this.page}&per_page=40`
       );
-    } else if (Math.ceil(data.totalHits / 40) < this.page) {
+
+      if (data.totalHits === 0) {
+        Notify.failure(
+          'Sorry, there are no images matching your search query. Please try again.'
+        );
+      } else if (Math.ceil(data.totalHits / 40) < this.page) {
+        Notify.info(
+          "We're sorry, but you've reached the end of search results."
+        );
+        refs.loadMoreBtn.classList.add('visually-hidden');
+      }
+
+      this.page += 1;
+
+      return data;
+    } catch (error) {
       Notify.info("We're sorry, but you've reached the end of search results.");
       refs.loadMoreBtn.classList.add('visually-hidden');
     }
-
-    this.page += 1;
-
-    return data;
   }
 
   restPage() {
