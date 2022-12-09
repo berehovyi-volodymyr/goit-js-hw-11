@@ -15,7 +15,7 @@ const lightbox = new SimpleLightbox('.gallery >.photo-card a', {
   captionDelay: 250,
 });
 
-function onClick(e) {
+async function onClick(e) {
   e.preventDefault();
   let value = e.currentTarget.elements.searchQuery.value;
   if (value.trim() !== '') {
@@ -29,30 +29,23 @@ function onClick(e) {
 
   pixabayApiService.restPage();
 
-  pixabayApiService
-    .fetchPictures()
-    .then(data => {
-      clearRender();
-      render(data.hits);
-      refs.loadMoreBtn.classList.remove('visually-hidden');
-      return data;
-    })
-    .then(data => {
-      if (data.totalHits > 1) {
-        Notify.success(`Hooray! We found ${data.totalHits} images.`);
-      }
-    })
-    .then(() => {
-      lightbox;
-      lightbox.refresh();
-    });
+  const data = await pixabayApiService.fetchPictures();
+  clearRender();
+  render(data.hits);
+  refs.loadMoreBtn.classList.remove('visually-hidden');
+
+  if (data.totalHits > 1) {
+    Notify.success(`Hooray! We found ${data.totalHits} images.`);
+  }
+
+  lightbox;
+  lightbox.refresh();
 }
 
-function onLoadMore() {
-  pixabayApiService
-    .fetchPictures()
-    .then(data => render(data.hits))
-    .then(() => scroll());
+async function onLoadMore() {
+  const data = await pixabayApiService.fetchPictures();
+  render(data.hits);
+  scroll();
 }
 
 function render(hits) {
