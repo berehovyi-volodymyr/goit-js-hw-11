@@ -43,9 +43,13 @@ async function onClick(e) {
 }
 
 async function onLoadMore() {
-  const data = await pixabayApiService.fetchPictures();
-  render(data.hits);
-  scroll();
+  try {
+    const data = await pixabayApiService.fetchPictures();
+    render(data.hits);
+    scroll();
+  } catch (error) {
+    console.log(error.message);
+  }
 }
 
 function render(hits) {
