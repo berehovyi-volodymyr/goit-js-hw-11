@@ -17,14 +17,17 @@
 
 .gallery {
   display: flex;
+  justify-content: center;
   flex-wrap: wrap;
   gap: 25px;
   padding-left: 5px;
   padding-right: 5px;
+  padding-top: 20px;
 }
 
 .photo-card {
-  width: 320px;
+  max-width: 320px;
+  width: 100%;
 }
 
 .info {
